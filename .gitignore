@@ -1,0 +1,5 @@
+node_modules/jsdom
+tests/
+.DS_Store
+_prj/
+lib/config.js

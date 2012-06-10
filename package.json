@@ -1,0 +1,15 @@
+ {
+  "name": "PaperScraper",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "underscored": "*",
+    "jsdom": "0.2.x",
+    "restify": "1.4.x",
+    "mime": "1.2.x",
+    "resourceful": "0.1.x"
+  },
+  "engines": { "node": ">= 0.6.0" }
+}
