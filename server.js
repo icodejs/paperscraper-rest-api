@@ -1,7 +1,7 @@
 var
 scraper = require('./lib/scraper'),
-  restify = require('restify'),
-  webPage = require('./lib/webPage');
+restify = require('restify'),
+webPage = require('./lib/webPage');
 
 function getImageData(req, res, next) {
   console.log('-----------------');
