@@ -1,9 +1,9 @@
 var
+app     = require('express').createServer(),
 scraper = require('./lib/scraper'),
-restify = require('restify'),
 webPage = require('./lib/webPage');
 
-function getImageData(req, res, next) {
+function getImageData(req, res) {
   console.log('-----------------');
 
   scraper.scrape({
@@ -16,39 +16,39 @@ function getImageData(req, res, next) {
         throw Error(err);
       }
 
-      res.send(obj.output);
-      return next();
+      res.end(obj.output);
     }
   });
 }
 
-function saveWebPage(req, res, next) {
+function saveWebPage(req, res) {
   // this data needs to come from a post /get request from the server
   webPage.create({
     category: 'animals',
     url: 'http://animals.com'
   }, function(err, page) {
     res.end(page);
-    return next();
   });
 }
 
-function loadWebPages(req, res, next) {
+function loadWebPages(req, res) {
   webPage.getWebPages(function(err, webPages) {
     if (err) {
       throw err;
     }
-    res.send(webPages);
-    return next();
+
+    res.end(JSON.stringify(webPages));
   });
 }
 
-var server = restify.createServer();
-server.use(restify.queryParser());
-server.use(restify.bodyParser());
-server.get('/scrape/page/', getImageData);
-server.get('/load-web-pages/', loadWebPages);
-
-server.listen(8080, function() {
-  console.log('%s listening at %s', server.name, server.url);
+app.get('/scrape/page/', function(req, res){
+  getImageData(req, res);
 });
+
+app.get('/load-web-pages/', function(req, res){
+  loadWebPages(req, res);
+});
+
+app.listen(5000);
+
+console.log('listening at %s', 'http://localhost:5000');

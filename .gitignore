@@ -1,4 +1,4 @@
-node_modules/jsdom
+node_modules/
 tests/
 test/
 .DS_Store
