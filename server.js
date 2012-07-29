@@ -1,10 +1,46 @@
+
 var
 app       = require('express').createServer(),
 url       = require('url'),
 qs        = require('querystring'),
 scraper   = require('./lib/scraper'),
 webPage   = require('./lib/webPage'),
-wallpaper = require('./lib/wallpaper');
+wallpaper = require('./lib/wallpaper'),
+user      = require('./lib/user');
+
+app.get('/scrape/webPage/', function(req, res){
+  scrapeWebPage(req, res);
+});
+
+// webPages
+app.get('/load/webPages/', function(req, res){
+  loadWebPages(req, res);
+});
+
+app.get('/save/webPage/', function(req, res){
+  saveWebPage(req, res);
+});
+
+// wallpapers
+app.get('/load/wallpapers/', function(req, res){
+  loadWallpapers(req, res);
+});
+
+app.get('/save/wallpaper/', function(req, res){
+  saveWallpaper(req, res);
+});
+
+// users
+app.get('/load/users/', function(req, res){
+  loadUsers(req, res);
+});
+
+app.get('/save/user/', function(req, res){
+  saveUser(req, res);
+});
+
+app.listen(5000);
+
 
 function scrapeWebPage(req, res) {
   scraper.scrape({
@@ -13,18 +49,13 @@ function scrapeWebPage(req, res) {
     pageUrl: req.params.url,
     query: req.query,
     callback: function(err, obj) {
-      if (err)
-        throw Error(err);
-
+      if (err) throw Error(err);
       res.end(obj.output);
     }
   });
 }
 
 function saveWebPage(req, res) {
-  // this data needs to come from a post /get request from the server
-  // e.g. http://localhost:5000/save/webpages/?category=test&url=http://www.test.com
-
   var
   parsedUrl = url.parse(req.url, true),
   pathname  = parsedUrl.pathname,
@@ -39,8 +70,12 @@ function saveWebPage(req, res) {
     category: category,
     url: _url
   }, function(err, page) {
+    if (err) throw err;
     res.end(JSON.stringify(page));
   });
+
+  // this data needs to come from a post /get request from the server
+  // e.g. http://localhost:5000/save/webpages/?category=test&url=http://www.test.com
 }
 
 function loadWebPages(req, res) {
@@ -51,9 +86,6 @@ function loadWebPages(req, res) {
 }
 
 function saveWallpaper(req, res) {
-  // this data needs to come from a post /get request from the server
-  // e.g. http://localhost:5000/save/wallpaper/?category=test&url=http://www.test.com
-
   var
   parsedUrl = url.parse(req.url, true),
   pathname  = parsedUrl.pathname,
@@ -74,8 +106,12 @@ function saveWallpaper(req, res) {
     titleText   : query.titleText || '',
     fileType    : query.fileType || ''
   }, function(err, page) {
+    if (err) throw err;
     res.end(JSON.stringify(page));
   });
+
+  // this data needs to come from a post /get request from the server
+  // e.g. http://localhost:5000/save/wallpaper/?category=test&url=http://www.test.com
 }
 
 function loadWallpapers(req, res) {
@@ -85,26 +121,28 @@ function loadWallpapers(req, res) {
   });
 }
 
-app.get('/scrape/webPage/', function(req, res){
-  scrapeWebPage(req, res);
-});
+function saveUser(req, res) {
+  var
+  parsedUrl = url.parse(req.url, true),
+  pathname  = parsedUrl.pathname,
+  query     = parsedUrl.query;
 
-app.get('/load/webPages/', function(req, res){
-  loadWebPages(req, res);
-});
+  user.create({
+    usernane       : query.username || '',
+    email          : query.email || '',
+    password       : query.password || '',
+    dateRegistered : String(Date.now(), 10)
+  }, function(err, user) {
+    if (err) throw err;
+    res.end(JSON.stringify(user));
+  });
+}
 
-app.get('/save/webPage/', function(req, res){
-  saveWebPage(req, res);
-});
-
-app.get('/save/wallpaper/', function(req, res){
-  saveWallpaper(req, res);
-});
-
-app.get('/load/wallpapers/', function(req, res){
-  loadWallpapers(req, res);
-});
-
-app.listen(5000);
+function loadUsers(req, res) {
+  user.all(function(err, users) {
+    if (err) throw err;
+    res.end(JSON.stringify(users));
+  });
+}
 
 console.log('listening at %s', 'http://localhost:5000');
