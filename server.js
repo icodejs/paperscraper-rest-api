@@ -8,7 +8,8 @@ webPage    = require('./lib/webPage'),
 wallpaper  = require('./lib/wallpaper'),
 searchTerm = require('./lib/searchTerm'),
 dimension  = require('./lib/dimension'),
-user       = require('./lib/user');
+user       = require('./lib/user'),
+common     = require('./lib/common');
 
 app.get('/scrape/webPage/', function(req, res){
   scrapeWebPage(req, res);
@@ -21,6 +22,10 @@ app.get('/load/webPages/', function(req, res){
 
 app.get('/save/webPage/', function(req, res){
   saveWebPage(req, res);
+});
+
+app.get('/save/batch/webPages/', function(req, res){
+  common.saveWebPageBatch(req, res);
 });
 
 // wallpapers
@@ -43,11 +48,11 @@ app.get('/save/user/', function(req, res){
 
 // search terms
 app.get('/save/batch/searchterms/', function(req, res){
-  createBatch(req, res);
+  common.saveBatch(req, res);
 });
 
 app.get('/', function(req, res){
-  res.end('hello world');
+  res.end('welcome to paper scraper node library');
 });
 
 app.listen(5000);
@@ -174,35 +179,5 @@ function loadUsers(req, res) {
   });
 }
 
-function createBatch(req, res) {
-  var search_terms = [
-      'cityscape wallpaper',
-      'marvel comics',
-      'dc commics',
-      'space wallpaper',
-      'space stars wallpaper',
-      'space planets wallpaper',
-      'muscle cars',
-      'tokyo japan city',
-      'adult swim wallpaper',
-      'thepaperwall cityscape wallpapers',
-      'akira wallpaper',
-      'high res background textures',
-      'high res background wallpapers',
-      'architectural photography wallpapers',
-      'Street photography wallpapers',
-      'macro photography wallpapers',
-      'Aerial photography wallpapers',
-      'Black and White photography wallpapers',
-      'Night photography wallpapers',
-      'dream-wallpaper.com',
-      'flowers',
-      'graffiti',
-      'national geographic wallpaper'
-  ];
-
-  searchTerm.createBatch(search_terms);
-  res.end('done');
-}
 
 console.log('listening at %s', 'http://localhost:5000');
