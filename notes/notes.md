@@ -19,3 +19,7 @@
 *alt text
 *title text
 *file type
+
+## Todo
+*Add search terms to the database
+*Add dimensions to database
