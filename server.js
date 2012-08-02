@@ -65,7 +65,12 @@ function scrapeWebPage(req, res) {
     pageUrl: req.params.url,
     query: req.query,
     callback: function(err, obj) {
-      if (err) throw Error(err);
+      res.contentType(obj.contentType);
+      if (err) {
+        //throw Error(err);
+        console.log(err);
+        res.end({error: err.toString()});
+      }
       res.end(obj.output);
     }
   });
@@ -98,12 +103,25 @@ function saveWebPage(req, res) {
 }
 
 function loadWebPages(req, res) {
-  webPage.all(function(err, webPages) {
-    if (err) {
-      console.log(err);
-      throw err;
+  webPage.allJsonp({
+    res: res,
+    req: req,
+    pageUrl: req.params.url,
+    query: req.query,
+    callback: function(err, obj) {
+      res.contentType(obj.contentType);
+
+      if (err) {
+        console.log(err);
+        var jsonpError = common.jsonpify({
+          json       : {error: err.toString()},
+          callbackId : obj.callbackId
+        });
+        res.end(jsonpError);
+      }
+      console.log(obj.output);
+      res.end(obj.output);
     }
-    res.end(JSON.stringify(webPages));
   });
 }
 
@@ -121,7 +139,7 @@ function saveWallpaper(req, res) {
     originUrl   : query.originUrl || '',
     domain      : query.domain || '',
     fileSizeKB  : query.fileSizeKB || '',
-    dimension  : query.dimension || '',
+    dimension   : query.dimension || '',
     width       : query.width || '',
     height      : query.height || '',
     altText     : query.altText || '',
@@ -181,3 +199,6 @@ function loadUsers(req, res) {
 
 
 console.log('listening at %s', 'http://localhost:5000');
+
+// Notes
+// *. Instead of throwing error, it may be better to start passing the error back to the browser as jsonp??
