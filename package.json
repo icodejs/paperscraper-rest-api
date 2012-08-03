@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "underscored": "*",
-    "jsdom": "0.2.x",
+    "jsdom": "*",
     "express": "*",
     "mime": "1.2.x",
     "resourceful": "0.1.x"
