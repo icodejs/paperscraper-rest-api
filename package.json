@@ -8,7 +8,7 @@
     "underscored": "*",
     "jsdom": "*",
     "express": "*",
-    "mime": "1.2.x",
+    "mime": "2.4.x",
     "resourceful": "0.1.x"
   },
   "engines": { "node": ">= 0.6.0" }
